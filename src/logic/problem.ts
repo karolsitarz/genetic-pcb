@@ -8,8 +8,8 @@ export type Problem = {
   height: number;
   connectors: Connector[];
   population: Individual[];
-  duplicationWeights: bigint[];
-  outOfBoundsWeights: bigint[];
+  duplicationWeights: number[];
+  outOfBoundsWeights: number[];
 };
 
 export const generateProblem = (
@@ -24,7 +24,7 @@ export const generateProblem = (
     height,
     connectors,
     population,
-    duplicationWeights: times(connectors.length, () => BigInt(1)),
-    outOfBoundsWeights: times(connectors.length, () => BigInt(1)),
+    duplicationWeights: times(connectors.length, () => 1),
+    outOfBoundsWeights: times(connectors.length, () => 1),
   };
 };
