@@ -1,6 +1,6 @@
 import { compareTuples, Pair, splitAt } from "util/array";
-import { Segment, segmentToCoordinates } from "logic/segment";
-import { Connector } from "logic/problem";
+import { mutateSegment, Segment, segmentToCoordinates } from "logic/segment";
+import { Connector, Problem } from "logic/problem";
 import { roulette } from "logic/random";
 import { Direction, isHorizontal, isVertical, rotate } from "logic/direction";
 import { randomBetween } from "util/number";
@@ -94,11 +94,11 @@ export const generatePath = (
   };
 
   const generated = generateSegments(start);
-  const segments = mergePath(generated);
+  const segments = mergeSegments(generated);
   return { start, index, segments };
 };
 
-export const mergePath = (segments: Segment[]): Segment[] => {
+export const mergeSegments = (segments: Segment[]): Segment[] => {
   if (segments.length < 2) return segments;
   return segments.reduce((segments, segment) => {
     if (segments.length === 0) return [segment];
@@ -121,4 +121,22 @@ export const mergePath = (segments: Segment[]): Segment[] => {
 
     return [...segments, [distance, direction]];
   }, [] as Segment[]);
+};
+
+export const mutate = (path: Path, problem: Problem) => {
+  if (randomBetween(0, 100) > problem.mutationChance) return path;
+
+  const { segments } = path;
+  const { width, height } = problem;
+  const segmentId = randomBetween(0, path.segments.length);
+  const segment = segments[segmentId];
+
+  const mutation = mutateSegment(segment, width, height);
+  const newSegments = [
+    ...segment.slice(0, segmentId),
+    ...mutation,
+    ...segment.slice(segmentId + 1),
+  ] as Segment[];
+
+  return mergeSegments(newSegments);
 };

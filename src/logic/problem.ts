@@ -10,6 +10,7 @@ export type Problem = {
   population: Individual[];
   duplicationWeights: number[];
   outOfBoundsWeights: number[];
+  mutationChance: number;
 };
 
 export const generateProblem = (
@@ -17,6 +18,7 @@ export const generateProblem = (
   height: number,
   connectors: Connector[],
   populationSize: number,
+  mutationChance: number,
 ): Problem => {
   const population = times(populationSize, () => generateIndividual(width, height, connectors));
   return {
@@ -26,5 +28,6 @@ export const generateProblem = (
     population,
     duplicationWeights: times(connectors.length, () => 1),
     outOfBoundsWeights: times(connectors.length, () => 1),
+    mutationChance,
   };
 };
