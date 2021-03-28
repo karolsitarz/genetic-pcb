@@ -12,7 +12,7 @@ export const roulette = <T>(list: [T, number][], take = 2) => {
         progress: progress + topBound,
       };
     },
-    { roulette: [] as typeof list, progress: 0 }
+    { roulette: [] as typeof list, progress: 0 },
   );
 
   return times(take, () => {

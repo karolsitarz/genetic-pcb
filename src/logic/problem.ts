@@ -16,7 +16,7 @@ export const generateProblem = (
   width: number,
   height: number,
   connectors: Connector[],
-  populationSize: number
+  populationSize: number,
 ): Problem => {
   const population = times(populationSize, () => generateIndividual(width, height, connectors));
   return {

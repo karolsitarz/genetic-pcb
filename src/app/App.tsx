@@ -21,7 +21,7 @@ export const App = () => {
 
   useEffect(() => {
     const newConnectors = connectors.filter(
-      ([start, end]) => start[0] < width && start[1] < height && end[0] < width && end[1] < height
+      ([start, end]) => start[0] < width && start[1] < height && end[0] < width && end[1] < height,
     );
     setConnectors(newConnectors);
   }, [width, height]);
@@ -70,7 +70,7 @@ export const App = () => {
                   const coordinates: Pair<number> = [x, y];
                   const connector = connectors?.findIndex(
                     ([start, end]) =>
-                      compareTuples(start, coordinates) || compareTuples(end, coordinates)
+                      compareTuples(start, coordinates) || compareTuples(end, coordinates),
                   );
                   const hasConnector = connector != null && connector >= 0;
                   const isSelected = selected && compareTuples(selected, coordinates);
@@ -97,7 +97,7 @@ export const App = () => {
                       />
                     </button>
                   );
-                })
+                }),
               )}
             </div>
           )}

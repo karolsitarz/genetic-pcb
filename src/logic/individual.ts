@@ -9,7 +9,7 @@ export type Individual = {
 export const generateIndividual = (
   width: number,
   height: number,
-  connectors: Connector[]
+  connectors: Connector[],
 ): Individual => {
   const paths = connectors.map((connector, index) => generatePath(connector, width, height, index));
   return { paths };
@@ -18,7 +18,7 @@ export const generateIndividual = (
 export const getOutOfBounds = (
   coordinates: ReturnType<typeof pathToCoordinates>,
   width: number,
-  height: number
+  height: number,
 ) =>
   coordinates
     .filter(([x, y]) => x < 0 || y < 0 || x >= width || y >= height)
@@ -27,7 +27,7 @@ export const getOutOfBounds = (
         ...grouped,
         [index]: (grouped?.[index] ?? 0) + 1,
       }),
-      {} as { [key: number]: number }
+      {} as { [key: number]: number },
     );
 
 export const getDuplicates = (coordinates: ReturnType<typeof pathToCoordinates>) =>
@@ -36,7 +36,7 @@ export const getDuplicates = (coordinates: ReturnType<typeof pathToCoordinates>)
       ...grouped,
       [`${x}-${y}`]: [...(grouped?.[`${x}-${y}`] ?? []), index],
     }),
-    {} as { [key: string]: number[] }
+    {} as { [key: string]: number[] },
   );
 
 export const getFitness = (individual: Individual, problem: Problem): number => {
@@ -44,16 +44,16 @@ export const getFitness = (individual: Individual, problem: Problem): number => 
   const { width, height, outOfBoundsWeights, duplicationWeights } = problem;
   const coordinates = paths.reduce(
     (list, path) => [...list, ...pathToCoordinates(path)],
-    [] as ReturnType<typeof pathToCoordinates>
+    [] as ReturnType<typeof pathToCoordinates>,
   );
 
   const outOfBounds = Object.entries(getOutOfBounds(coordinates, width, height)).reduce<number>(
     (value, [index, exp]) => value + outOfBoundsWeights[parseInt(index)] ** exp,
-    0
+    0,
   );
   const duplicates = Object.values(getDuplicates(coordinates)).reduce(
     (value, indexes) => indexes.reduce((value, index) => value * duplicationWeights[index], 1),
-    0
+    0,
   );
   const length = coordinates.length;
   const segmentsCount = paths.reduce((value, { segments }) => value + segments.length, 0);

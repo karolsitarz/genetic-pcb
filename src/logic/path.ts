@@ -34,7 +34,7 @@ export const generatePath = (
   [start, end]: Connector,
   width: number,
   height: number,
-  index: number
+  index: number,
 ): Path => {
   const [endX, endY] = end;
 
@@ -75,7 +75,7 @@ export const generatePath = (
       (currentY === endY && isHorizontal(direction))
     ) {
       const coordinates = segmentToCoordinates(current, [distance, direction]);
-      const isThroughEnd = coordinates.find((coord) => compareTuples(coord, end));
+      const isThroughEnd = coordinates.find((coordinate) => compareTuples(coordinate, end));
       if (isThroughEnd) {
         distance = Math.abs(currentX - endX + currentY - endY);
       }
