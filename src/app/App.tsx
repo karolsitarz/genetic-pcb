@@ -4,7 +4,9 @@ import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
 import { compareTuples, Pair, times } from "util/array";
-import { Connector, generateProblem } from "logic/problem";
+import { Connector, generateProblem, Problem } from "logic/problem";
+import { Individual } from "logic/individual";
+import { BoardCanvas } from "components/BoardCanvas";
 
 export const App = () => {
   const [width, setWidth] = useState(8);
@@ -13,7 +15,9 @@ export const App = () => {
   const [mutation, setMutation] = useState(10);
   const [selected, setSelected] = useState<Pair<number> | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+
+  const [problem, setProblem] = useState<Problem>();
+  const [individual, setIndividual] = useState<Individual>();
 
   useEffect(() => {
     const newConnectors = connectors.filter(
@@ -23,7 +27,7 @@ export const App = () => {
   }, [width, height]);
 
   const handleConnectorClick = (position: Pair<number>, hasConnector: boolean) => () => {
-    if (isRunning) return;
+    if (problem) return;
     if (hasConnector) return;
     if (connectors.length === COLORS.length * INTENSITY.length) return;
 
@@ -41,57 +45,64 @@ export const App = () => {
 
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population);
-    console.log(problem);
-    // setIsRunning(true);
+    setProblem(problem);
   };
 
   return (
     <main className="w-screen h-screen flex items-stretch">
       <section className="flex-1 bg-gray-200 flex items-center justify-center flex-col">
-        <CanvasContainer className="bg-white relative rounded-xl">
-          <canvas className="absolute left-0 top-0 bottom-0 right-0 w-full h-full" />
-          <div
-            className="absolute left-0 top-0 bottom-0 right-0 w-full h-full grid place-items-center"
-            style={{
-              gridTemplateColumns: `repeat(${width}, 1fr)`,
-              gridTemplateRows: `repeat(${height}, 1fr)`,
-            }}
-          >
-            {times(height, (y) =>
-              times(width, (x) => {
-                const coordinates: Pair<number> = [x, y];
-                const connector = connectors?.findIndex(
-                  ([start, end]) =>
-                    compareTuples(start, coordinates) || compareTuples(end, coordinates)
-                );
-                const hasConnector = connector != null && connector >= 0;
-                const isSelected = selected && compareTuples(selected, coordinates);
-                const [color, intensity] = hasConnector
-                  ? getColor(connector)
-                  : isSelected
-                  ? ["gray", 600]
-                  : ["gray", 300];
+        <CanvasContainer
+          className="bg-white relative rounded-xl"
+          style={{ aspectRatio: `${width} / ${height}` }}
+        >
+          {problem && <BoardCanvas {...{ problem, individual }} />}
+          {!problem && (
+            <div
+              className="absolute left-0 top-0 bottom-0 right-0 w-full h-full grid place-items-center"
+              style={{
+                gridTemplateColumns: `1fr repeat(${width}, 2fr) 1fr`,
+                gridTemplateRows: `1fr repeat(${height}, 2fr) 1fr`,
+              }}
+            >
+              {times(height, (y) =>
+                times(width, (x) => {
+                  const coordinates: Pair<number> = [x, y];
+                  const connector = connectors?.findIndex(
+                    ([start, end]) =>
+                      compareTuples(start, coordinates) || compareTuples(end, coordinates)
+                  );
+                  const hasConnector = connector != null && connector >= 0;
+                  const isSelected = selected && compareTuples(selected, coordinates);
+                  const [color, intensity] = hasConnector
+                    ? getColor(connector)
+                    : isSelected
+                    ? ["gray", 600]
+                    : ["gray", 300];
 
-                return (
-                  <button
-                    key={`${x}-${y}`}
-                    className={`${!hasConnector && !isRunning ? "group" : "cursor-default"}`}
-                    onClick={handleConnectorClick(coordinates, hasConnector)}
-                    disabled={isRunning || hasConnector}
-                  >
-                    <div
-                      className={`bg-${color}-${intensity} ${
-                        isSelected ? "ring-4 ring-gray-300" : ""
-                      } ${hasConnector ? `ring-4 ring-${color}-100` : "group-hover:bg-gray-600"}`}
-                    />
-                  </button>
-                );
-              })
-            )}
-          </div>
+                  return (
+                    <button
+                      key={`${x}-${y}`}
+                      className={`${!hasConnector && !problem ? "group" : "cursor-default"}`}
+                      onClick={handleConnectorClick(coordinates, hasConnector)}
+                      disabled={problem || hasConnector}
+                      style={{
+                        gridArea: `${y + 2} / ${x + 2} / span 1 / span 1`,
+                      }}
+                    >
+                      <div
+                        className={`bg-${color}-${intensity} ${
+                          isSelected ? "ring-4 ring-gray-300" : ""
+                        } ${hasConnector ? `ring-4 ring-${color}-100` : "group-hover:bg-gray-600"}`}
+                      />
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
         </CanvasContainer>
       </section>
-      {!isRunning && (
+      {!problem && (
         <aside className="max-w-sm w-6/12 bg-gray-300 flex flex-col p-8">
           <section>
             <label className="block">
@@ -158,7 +169,7 @@ export const App = () => {
               className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 mt-10 shadow-lg"
               disabled
             >
-              Generate
+              Start
             </button>
           )}
           {connectors?.length >= 2 && (
@@ -166,16 +177,35 @@ export const App = () => {
               className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
               onClick={handleStart}
             >
-              Generate
+              Start
             </button>
           )}
         </aside>
       )}
-      {isRunning && (
+      {problem && (
         <aside className="max-w-sm w-6/12 bg-gray-300 flex justify-center flex-col p-8">
+          <div>
+            <h1 className="font-bold text-gray-700">Individuals</h1>
+            <div className="bg-gray-200 rounded px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+              {!problem?.population?.length && (
+                <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
+                  No individuals generated
+                </div>
+              )}
+              {problem?.population.map((individual, i) => (
+                <div
+                  key={i}
+                  className="text-sm text-gray-600 p-2 hover:bg-gray-400 transition-colors cursor-pointer"
+                  onClick={() => setIndividual(individual)}
+                >
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+          </div>
           <button
-            className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
-            onClick={() => setIsRunning(false)}
+            className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg mt-4"
+            onClick={() => setProblem(undefined)}
           >
             Stop
           </button>

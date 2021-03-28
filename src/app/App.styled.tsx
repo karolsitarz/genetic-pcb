@@ -1,14 +1,9 @@
 import styled from "@emotion/styled";
 
 export const CanvasContainer = styled.div`
-  width: 75%;
-  max-width: 75vh;
-
-  &::before {
-    content: "";
-    padding-bottom: 100%;
-    display: block;
-  }
+  width: 100%;
+  max-width: 75%;
+  max-height: 75%;
 
   > div > button {
     width: 100%;

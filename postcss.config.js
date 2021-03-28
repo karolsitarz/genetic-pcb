@@ -2,5 +2,9 @@
 const tailwindcss = require("tailwindcss");
 
 module.exports = {
-  plugins: [tailwindcss("./tailwind.js"), require("autoprefixer")],
+  plugins: [
+    tailwindcss("./tailwind.js"),
+    require("postcss-aspect-ratio-polyfill"),
+    require("autoprefixer"),
+  ],
 };
