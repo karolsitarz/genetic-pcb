@@ -15,7 +15,7 @@ const translate = (pos: number) => (pos + 1) * UNIT;
 
 export const BoardCanvas = ({ individual, problem }: Props) => {
   const ref = useRef<HTMLCanvasElement>(null);
-  const { width, height } = problem;
+  const { width, height, connectors } = problem;
 
   useEffect(() => {
     const canvas = ref.current;
@@ -26,10 +26,10 @@ export const BoardCanvas = ({ individual, problem }: Props) => {
     ctx.fillStyle = "#dddddd";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let x = 1; x <= width; x++) {
-      const xPos = x * UNIT;
-      for (let y = 1; y <= height; y++) {
-        const yPos = y * UNIT;
+    for (let x = 0; x < width; x++) {
+      const xPos = translate(x);
+      for (let y = 0; y < height; y++) {
+        const yPos = translate(y);
         ctx.beginPath();
         ctx.arc(xPos, yPos, WIDTH, 0, 2 * Math.PI);
         ctx.fill();
@@ -37,14 +37,26 @@ export const BoardCanvas = ({ individual, problem }: Props) => {
       }
     }
 
+    for (let i = 0; i < connectors.length; i++) {
+      const [[startX, startY], [endX, endY]] = connectors[i];
+      const [hue, lightness] = getHSL(i);
+      ctx.fillStyle = `hsl(${hue}, 90%, ${lightness}%)`;
+      ctx.beginPath();
+      ctx.arc(translate(startX), translate(startY), WIDTH * 1.2, 0, 2 * Math.PI);
+      ctx.arc(translate(endX), translate(endY), WIDTH * 1.2, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.closePath();
+    }
+
     if (!individual) return;
+    const { paths } = individual;
 
     ctx.lineWidth = WIDTH;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    for (let i = 0; i < individual.paths.length; i++) {
-      const path = individual.paths[i];
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths[i];
       const { start, segments } = path;
       let [startX, startY] = start;
 

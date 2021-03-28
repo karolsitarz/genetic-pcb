@@ -51,9 +51,9 @@ export const App = () => {
 
   return (
     <main className="w-screen h-screen flex items-stretch">
-      <section className="flex-1 bg-gray-200 flex items-center justify-center flex-col">
+      <section className="flex-1 bg-gray-100 flex items-center justify-center flex-col">
         <CanvasContainer
-          className="bg-white relative rounded-xl"
+          className="bg-white relative rounded-xl shadow-2xl"
           style={{ aspectRatio: `${width} / ${height}` }}
         >
           {problem && <BoardCanvas {...{ problem, individual }} />}
@@ -104,7 +104,7 @@ export const App = () => {
         </CanvasContainer>
       </section>
       {!problem && (
-        <aside className="max-w-sm w-6/12 bg-gray-300 flex flex-col p-8">
+        <aside className="max-w-sm w-6/12 bg-gray-200 flex flex-col p-8">
           <section>
             <label className="block">
               <h1 className="font-bold text-gray-700">Width</h1>
@@ -118,7 +118,7 @@ export const App = () => {
 
             <div className="mt-4">
               <h1 className="font-bold text-gray-700">Connections</h1>
-              <div className="bg-gray-200 rounded px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+              <div className="bg-gray-100 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
                 {!connectors?.length && (
                   <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
                     No connections found
@@ -184,10 +184,10 @@ export const App = () => {
         </aside>
       )}
       {problem && (
-        <aside className="max-w-sm w-6/12 bg-gray-300 flex justify-center flex-col p-8">
+        <aside className="max-w-sm w-6/12 bg-gray-200 flex justify-center flex-col p-8">
           <div>
             <h1 className="font-bold text-gray-700">Individuals</h1>
-            <div className="bg-gray-200 rounded px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+            <div className="bg-gray-100 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
               {!problem?.population?.length && (
                 <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
                   No individuals generated
