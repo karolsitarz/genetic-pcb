@@ -38,7 +38,7 @@ export const generatePath = (
 ): Path => {
   const [endX, endY] = end;
 
-  const generateSegment = (current: Pair<number>): Segment[] => {
+  const generateSegments = (current: Pair<number>): Segment[] => {
     if (compareTuples(current, end)) return [];
     const [currentX, currentY] = current;
 
@@ -90,15 +90,15 @@ export const generatePath = (
         ? [currentX - distance, currentY]
         : [currentX + distance, currentY];
 
-    return [[distance, direction], ...generateSegment(newCurrent)];
+    return [[distance, direction], ...generateSegments(newCurrent)];
   };
 
-  const generated = generateSegment(start);
-  const segments = mergeSegments(generated);
+  const generated = generateSegments(start);
+  const segments = mergePath(generated);
   return { start, index, segments };
 };
 
-export const mergeSegments = (segments: Segment[]): Segment[] => {
+export const mergePath = (segments: Segment[]): Segment[] => {
   if (segments.length < 2) return segments;
   return segments.reduce((segments, segment) => {
     if (segments.length === 0) return [segment];
