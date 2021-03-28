@@ -5,4 +5,7 @@ export const compareTuples = <T>(a: Pair<T>, b: Pair<T>): boolean => a[0] === b[
 export const times = <T>(n: number, fun: (index: number) => T) =>
   [...new Array(n)].map((_, i) => fun(i));
 
-export const last = <T>(list: T[]) => list[list.length - 1];
+export const splitAt = <T>(list: T[], at: number): [T[], T[]] => [
+  list.slice(0, at),
+  list.slice(at),
+];

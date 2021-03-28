@@ -1,8 +1,8 @@
-import { compareTuples, last, Pair } from "util/array";
+import { compareTuples, Pair, splitAt } from "util/array";
 import { Segment, segmentToCoordinates } from "logic/segment";
 import { Connector } from "logic/problem";
 import { roulette } from "logic/random";
-import { Direction, isHorizontal, isVertical } from "logic/direction";
+import { Direction, isHorizontal, isVertical, rotate } from "logic/direction";
 import { randomBetween } from "util/number";
 
 export type Path = {
@@ -18,9 +18,10 @@ export const pathToCoordinates = ({ segments, start, index }: Path) => {
   };
   const { coordinates } = segments.reduce(({ coordinates, start }, segment) => {
     const segmentCoordinates = segmentToCoordinates(start, segment);
+    const [, [last]] = splitAt(segmentCoordinates, -1);
     return {
       coordinates: [...coordinates, ...segmentCoordinates],
-      start: last(segmentCoordinates),
+      start: last,
     };
   }, initial);
 
@@ -92,6 +93,32 @@ export const generatePath = (
     return [[distance, direction], ...generateSegment(newCurrent)];
   };
 
-  const segments = generateSegment(start);
+  const generated = generateSegment(start);
+  const segments = mergeSegments(generated);
   return { start, index, segments };
+};
+
+export const mergeSegments = (segments: Segment[]): Segment[] => {
+  if (segments.length < 2) return segments;
+  return segments.reduce((segments, segment) => {
+    if (segments.length === 0) return [segment];
+    const [distance, direction] = segment;
+    const [list, [last]] = splitAt(segments, -1);
+    const [lastDistance, lastDirection] = last;
+
+    if (lastDirection === direction) {
+      return [...list, [lastDistance + distance, direction]];
+    }
+    if (lastDirection === rotate(direction, 180)) {
+      const newDistance = lastDistance - distance;
+      if (newDistance === 0) {
+        return list;
+      }
+
+      const newDirection = newDistance < 0 ? direction : rotate(direction, 180);
+      return [...list, [Math.abs(newDistance), newDirection]];
+    }
+
+    return [...segments, [distance, direction]];
+  }, [] as Segment[]);
 };
