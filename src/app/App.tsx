@@ -2,6 +2,7 @@ import { CanvasContainer } from "app/App.styled";
 import { useEffect, useState } from "react";
 import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
+import { FiTrash2 } from "react-icons/fi";
 
 const compareTuples = (a: [number, number], b: [number, number]): boolean =>
   a[0] === b[0] && a[1] === b[1];
@@ -35,10 +36,16 @@ export const App = () => {
     setSelected(null);
   };
 
+  const handleDeleteConnection = (i: number) => () => {
+    const before = connectors.slice(0, i);
+    const after = connectors.slice(i + 1);
+    setConnectors([...before, ...after]);
+  };
+
   return (
     <main className="w-screen h-screen flex items-stretch">
       <section className="flex-1 bg-gray-200 flex items-center justify-center flex-col">
-        <CanvasContainer className="bg-white relative rounded-3xl">
+        <CanvasContainer className="bg-white relative rounded-xl">
           <canvas className="absolute left-0 top-0 bottom-0 right-0 w-full h-full" />
           <div
             className="absolute left-0 top-0 bottom-0 right-0 w-full h-full grid place-items-center"
@@ -84,10 +91,43 @@ export const App = () => {
           <h1 className="font-bold text-lg">Width</h1>
           <RangeInput value={width} onChange={setWidth} min={5} max={20} />
         </label>
+
         <label className="w-full mt-4">
           <h1 className="font-bold text-lg">Height</h1>
           <RangeInput value={height} onChange={setHeight} min={5} max={20} />
         </label>
+
+        <div className="w-full mt-4">
+          <h1 className="font-bold text-lg">Connections</h1>
+          <div className="bg-gray-200 rounded w-full px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+            {!connectors?.length && (
+              <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
+                No connections found
+              </div>
+            )}
+            {connectors.map(([start, end], i) => {
+              const [color, intensity] = getColor(i);
+              return (
+                <div key={`${start[0]}-${start[1]}`} className="flex items-center py-2 group">
+                  <div
+                    className={`w-2 h-2 rounded-full mr-2 ring-2 bg-${color}-${intensity} ring-${color}-${
+                      intensity - 200
+                    }`}
+                  />
+                  <span className="font-bold text-sm text-gray-600">
+                    ({start[0]}, {start[1]}) - ({end[0]}, {end[1]})
+                  </span>
+                  <button
+                    className="p-1 ml-auto hover:opacity-100 opacity-50 transition-opacity"
+                    onClick={handleDeleteConnection(i)}
+                  >
+                    <FiTrash2 className="group-hover:opacity-100 opacity-30 transition-opacity" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </aside>
     </main>
   );
