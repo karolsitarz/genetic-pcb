@@ -14,9 +14,15 @@ export const rotate = (direction: Direction, degrees: number) => {
 };
 
 export const directionValue = (direction: Direction): Pair<number> => {
-  if (direction === Direction.Up) return [0, 1];
-  if (direction === Direction.Down) return [0, -1];
+  if (direction === Direction.Up) return [0, -1];
+  if (direction === Direction.Down) return [0, 1];
   if (direction === Direction.Left) return [-1, 0];
   if (direction === Direction.Right) return [1, 0];
   throw new Error();
 };
+
+export const isHorizontal = (direction: Direction) =>
+  direction === Direction.Left || direction === Direction.Right;
+
+export const isVertical = (direction: Direction) =>
+  direction === Direction.Up || direction === Direction.Down;

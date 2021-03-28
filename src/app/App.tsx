@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
-import { compareTuples, repeat, Pair } from "util/array";
+import { compareTuples, Pair, times } from "util/array";
+import { Connector, generateProblem } from "logic/problem";
 
 export const App = () => {
   const [width, setWidth] = useState(8);
@@ -11,7 +12,7 @@ export const App = () => {
   const [population, setPopulation] = useState(100);
   const [mutation, setMutation] = useState(10);
   const [selected, setSelected] = useState<Pair<number> | null>(null);
-  const [connectors, setConnectors] = useState<Pair<Pair<number>>[]>([]);
+  const [connectors, setConnectors] = useState<Connector[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,12 @@ export const App = () => {
     setConnectors([...before, ...after]);
   };
 
+  const handleStart = () => {
+    const problem = generateProblem(width, height, connectors, population);
+    console.log(problem);
+    // setIsRunning(true);
+  };
+
   return (
     <main className="w-screen h-screen flex items-stretch">
       <section className="flex-1 bg-gray-200 flex items-center justify-center flex-col">
@@ -50,8 +57,8 @@ export const App = () => {
               gridTemplateRows: `repeat(${height}, 1fr)`,
             }}
           >
-            {repeat(height, (y) =>
-              repeat(width, (x) => {
+            {times(height, (y) =>
+              times(width, (x) => {
                 const coordinates: Pair<number> = [x, y];
                 const connector = connectors?.findIndex(
                   ([start, end]) =>
@@ -151,15 +158,15 @@ export const App = () => {
               className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 mt-10 shadow-lg"
               disabled
             >
-              Start
+              Generate
             </button>
           )}
           {connectors?.length >= 2 && (
             <button
               className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
-              onClick={() => setIsRunning(true)}
+              onClick={handleStart}
             >
-              Start
+              Generate
             </button>
           )}
         </aside>
