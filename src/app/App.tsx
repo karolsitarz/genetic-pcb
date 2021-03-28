@@ -3,20 +3,18 @@ import { useEffect, useState } from "react";
 import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
-
-const compareTuples = (a: [number, number], b: [number, number]): boolean =>
-  a[0] === b[0] && a[1] === b[1];
+import { compareTuples, Tuple } from "util/tuple";
 
 export const App = () => {
   const [width, setWidth] = useState(8);
   const [height, setHeight] = useState(8);
   const [population, setPopulation] = useState(100);
   const [mutation, setMutation] = useState(10);
-  const [selected, setSelected] = useState<[number, number] | null>(null);
-  const [connectors, setConnectors] = useState<[[number, number], [number, number]][]>([]);
+  const [selected, setSelected] = useState<Tuple<number> | null>(null);
+  const [connectors, setConnectors] = useState<Tuple<Tuple<number>>[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
-  const indexToCoordinates = (i: number): [number, number] => {
+  const indexToCoordinates = (i: number): Tuple<number> => {
     const x = i % width;
     const y = Math.floor(i / width);
     return [x, y];
@@ -29,7 +27,7 @@ export const App = () => {
     setConnectors(newConnectors);
   }, [width, height]);
 
-  const handleConnectorClick = (position: [number, number], hasConnector: boolean) => () => {
+  const handleConnectorClick = (position: Tuple<number>, hasConnector: boolean) => () => {
     if (isRunning) return;
     if (hasConnector) return;
     if (connectors.length === COLORS.length * INTENSITY.length) return;
