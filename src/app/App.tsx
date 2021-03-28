@@ -46,6 +46,7 @@ export const App = () => {
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population);
     setProblem(problem);
+    setIndividual(undefined);
   };
 
   return (
