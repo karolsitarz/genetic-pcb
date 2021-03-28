@@ -10,7 +10,7 @@ export const CanvasContainer = styled.div`
     display: block;
   }
 
-  > div > div {
+  > div > button {
     width: 100%;
     height: 100%;
     display: flex;
