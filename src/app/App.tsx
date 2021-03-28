@@ -3,22 +3,16 @@ import { useEffect, useState } from "react";
 import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
-import { compareTuples, Tuple } from "util/tuple";
+import { compareTuples, repeat, Pair } from "util/array";
 
 export const App = () => {
   const [width, setWidth] = useState(8);
   const [height, setHeight] = useState(8);
   const [population, setPopulation] = useState(100);
   const [mutation, setMutation] = useState(10);
-  const [selected, setSelected] = useState<Tuple<number> | null>(null);
-  const [connectors, setConnectors] = useState<Tuple<Tuple<number>>[]>([]);
+  const [selected, setSelected] = useState<Pair<number> | null>(null);
+  const [connectors, setConnectors] = useState<Pair<Pair<number>>[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-
-  const indexToCoordinates = (i: number): Tuple<number> => {
-    const x = i % width;
-    const y = Math.floor(i / width);
-    return [x, y];
-  };
 
   useEffect(() => {
     const newConnectors = connectors.filter(
@@ -27,7 +21,7 @@ export const App = () => {
     setConnectors(newConnectors);
   }, [width, height]);
 
-  const handleConnectorClick = (position: Tuple<number>, hasConnector: boolean) => () => {
+  const handleConnectorClick = (position: Pair<number>, hasConnector: boolean) => () => {
     if (isRunning) return;
     if (hasConnector) return;
     if (connectors.length === COLORS.length * INTENSITY.length) return;
@@ -56,35 +50,37 @@ export const App = () => {
               gridTemplateRows: `repeat(${height}, 1fr)`,
             }}
           >
-            {[...new Array(width * height)].map((_, i) => {
-              const coordinates = indexToCoordinates(i);
-              const connector = connectors?.findIndex(
-                ([start, end]) =>
-                  compareTuples(start, coordinates) || compareTuples(end, coordinates)
-              );
-              const hasConnector = connector != null && connector >= 0;
-              const isSelected = selected && compareTuples(selected, coordinates);
-              const [color, intensity] = hasConnector
-                ? getColor(connector)
-                : isSelected
-                ? ["gray", 600]
-                : ["gray", 300];
+            {repeat(height, (y) =>
+              repeat(width, (x) => {
+                const coordinates: Pair<number> = [x, y];
+                const connector = connectors?.findIndex(
+                  ([start, end]) =>
+                    compareTuples(start, coordinates) || compareTuples(end, coordinates)
+                );
+                const hasConnector = connector != null && connector >= 0;
+                const isSelected = selected && compareTuples(selected, coordinates);
+                const [color, intensity] = hasConnector
+                  ? getColor(connector)
+                  : isSelected
+                  ? ["gray", 600]
+                  : ["gray", 300];
 
-              return (
-                <button
-                  key={i}
-                  className={`${!hasConnector && !isRunning ? "group" : "cursor-default"}`}
-                  onClick={handleConnectorClick(coordinates, hasConnector)}
-                  disabled={isRunning || hasConnector}
-                >
-                  <div
-                    className={`bg-${color}-${intensity} ${
-                      isSelected ? "ring-4 ring-gray-300" : ""
-                    } ${hasConnector ? `ring-4 ring-${color}-100` : "group-hover:bg-gray-600"}`}
-                  />
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={`${x}-${y}`}
+                    className={`${!hasConnector && !isRunning ? "group" : "cursor-default"}`}
+                    onClick={handleConnectorClick(coordinates, hasConnector)}
+                    disabled={isRunning || hasConnector}
+                  >
+                    <div
+                      className={`bg-${color}-${intensity} ${
+                        isSelected ? "ring-4 ring-gray-300" : ""
+                      } ${hasConnector ? `ring-4 ring-${color}-100` : "group-hover:bg-gray-600"}`}
+                    />
+                  </button>
+                );
+              })
+            )}
           </div>
         </CanvasContainer>
       </section>
