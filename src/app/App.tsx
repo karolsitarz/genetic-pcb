@@ -129,15 +129,15 @@ export const App = () => {
             {!problem && (
               <>
                 <section>
-                  <label className="block">
-                    <h1 className="font-bold text-gray-700">Width</h1>
-                    <RangeInput value={width} onChange={setWidth} min={5} max={20} />
-                  </label>
-
-                  <label className="mt-4 block">
-                    <h1 className="font-bold text-gray-700">Height</h1>
-                    <RangeInput value={height} onChange={setHeight} min={5} max={20} />
-                  </label>
+                  <RangeInput value={width} onChange={setWidth} min={5} max={20} label="Width" />
+                  <RangeInput
+                    value={height}
+                    onChange={setHeight}
+                    min={5}
+                    max={20}
+                    label="Height"
+                    className="mt-4"
+                  />
 
                   <div className="mt-4">
                     <h1 className="font-bold text-gray-700">Connections</h1>
@@ -173,23 +173,24 @@ export const App = () => {
                   </div>
                 </section>
                 <section className="mt-10">
-                  <label className="block">
-                    <h1 className="font-bold text-gray-700">Population</h1>
-                    <RangeInput
-                      value={population}
-                      onChange={setPopulation}
-                      min={50}
-                      max={1000}
-                      step={50}
-                    />
-                  </label>
-
-                  <label className="mt-4 block">
-                    <h1 className="font-bold text-gray-700">Mutation chance</h1>
-                    <RangeInput value={mutation} onChange={setMutation} min={1} max={80} step={1}>
-                      {(value) => <>{value}%</>}
-                    </RangeInput>
-                  </label>
+                  <RangeInput
+                    value={population}
+                    onChange={setPopulation}
+                    min={50}
+                    max={1000}
+                    step={50}
+                    label="Population"
+                  />
+                  <RangeInput
+                    value={mutation}
+                    onChange={setMutation}
+                    min={1}
+                    max={80}
+                    label="Mutation chance"
+                    className="mt-4"
+                  >
+                    {(value) => <>{value}%</>}
+                  </RangeInput>
                 </section>
                 {connectors?.length < 2 && (
                   <button
