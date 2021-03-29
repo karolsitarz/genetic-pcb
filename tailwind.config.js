@@ -13,7 +13,14 @@ module.exports = {
   },
   darkMode: "media",
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        screenpeek: "calc(100vh - 5rem)",
+      },
+      boxShadow: {
+        blur: "rgba(0, 0, 0, 0.3) 0 0 50px 0",
+      },
+    },
   },
   variants: {
     extend: {},
