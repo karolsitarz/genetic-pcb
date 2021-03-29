@@ -187,6 +187,7 @@ export const App = () => {
                     max={80}
                     label="Mutation chance"
                     className="mt-4"
+                    dangerZoneClassName="w-3/4"
                   >
                     {(value) => <>{value}%</>}
                   </RangeInput>

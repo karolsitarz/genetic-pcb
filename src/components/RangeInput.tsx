@@ -10,6 +10,7 @@ type Props = {
   step?: number;
   className?: string;
   label: string;
+  dangerZoneClassName?: string;
 };
 
 export const RangeInput = ({
@@ -21,6 +22,7 @@ export const RangeInput = ({
   step,
   className,
   label,
+  dangerZoneClassName = "w-1/3",
 }: Props) => {
   const [innerValue, setInnerValue] = useState(value);
 
@@ -32,22 +34,24 @@ export const RangeInput = ({
           {children ? children(innerValue) : innerValue}
         </span>
       </div>
-      <div className="py-4 w-full">
+      <div className="w-full">
         <Range
           values={[innerValue]}
           onChange={([value]) => setInnerValue(value)}
           onFinalChange={([value]) => onChange(value)}
           renderTrack={({ props, children }) => (
-            <div
-              className="w-full h-2 md:h-1 rounded-full bg-gray-300 focus-within:bg-blue-200"
-              {...props}
-            >
+            <div className="w-full h-9" {...props}>
+              <div className="w-full h-1 rounded-full bg-gray-300 absolute top-4 overflow-hidden">
+                <div
+                  className={`absolute h-full right-0 top-0 ${dangerZoneClassName} bg-red-300`}
+                />
+              </div>
               {children}
             </div>
           )}
           renderThumb={({ props }) => (
             <div
-              className="h-6 w-6 md:h-4 md:w-4 rounded-full bg-blue-500 shadow focus:outline-none focus:bg-blue-700"
+              className="h-5 w-5 rounded-full bg-blue-600 shadow focus:outline-none focus:bg-blue-800"
               {...props}
             />
           )}
