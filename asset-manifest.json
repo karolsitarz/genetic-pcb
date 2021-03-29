@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.f142d179.chunk.css",
-    "main.js": "/static/js/main.3352941c.chunk.js",
-    "main.js.map": "/static/js/main.3352941c.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.5c78efaa.js",
-    "runtime-main.js.map": "/static/js/runtime-main.5c78efaa.js.map",
-    "static/js/2.086f9e0c.chunk.js": "/static/js/2.086f9e0c.chunk.js",
-    "static/js/2.086f9e0c.chunk.js.map": "/static/js/2.086f9e0c.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.f142d179.chunk.css.map": "/static/css/main.f142d179.chunk.css.map",
-    "static/js/2.086f9e0c.chunk.js.LICENSE.txt": "/static/js/2.086f9e0c.chunk.js.LICENSE.txt"
+    "main.css": "/genetic-pcb/static/css/main.f142d179.chunk.css",
+    "main.js": "/genetic-pcb/static/js/main.3352941c.chunk.js",
+    "main.js.map": "/genetic-pcb/static/js/main.3352941c.chunk.js.map",
+    "runtime-main.js": "/genetic-pcb/static/js/runtime-main.14edefb4.js",
+    "runtime-main.js.map": "/genetic-pcb/static/js/runtime-main.14edefb4.js.map",
+    "static/js/2.086f9e0c.chunk.js": "/genetic-pcb/static/js/2.086f9e0c.chunk.js",
+    "static/js/2.086f9e0c.chunk.js.map": "/genetic-pcb/static/js/2.086f9e0c.chunk.js.map",
+    "index.html": "/genetic-pcb/index.html",
+    "static/css/main.f142d179.chunk.css.map": "/genetic-pcb/static/css/main.f142d179.chunk.css.map",
+    "static/js/2.086f9e0c.chunk.js.LICENSE.txt": "/genetic-pcb/static/js/2.086f9e0c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.5c78efaa.js",
+    "static/js/runtime-main.14edefb4.js",
     "static/js/2.086f9e0c.chunk.js",
     "static/css/main.f142d179.chunk.css",
     "static/js/main.3352941c.chunk.js"
