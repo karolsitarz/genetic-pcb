@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/genetic-pcb/static/css/main.b7697089.chunk.css",
-    "main.js": "/genetic-pcb/static/js/main.ecb1c935.chunk.js",
-    "main.js.map": "/genetic-pcb/static/js/main.ecb1c935.chunk.js.map",
+    "main.css": "/genetic-pcb/static/css/main.cefde400.chunk.css",
+    "main.js": "/genetic-pcb/static/js/main.731663b7.chunk.js",
+    "main.js.map": "/genetic-pcb/static/js/main.731663b7.chunk.js.map",
     "runtime-main.js": "/genetic-pcb/static/js/runtime-main.14edefb4.js",
     "runtime-main.js.map": "/genetic-pcb/static/js/runtime-main.14edefb4.js.map",
     "static/js/2.bead5d99.chunk.js": "/genetic-pcb/static/js/2.bead5d99.chunk.js",
     "static/js/2.bead5d99.chunk.js.map": "/genetic-pcb/static/js/2.bead5d99.chunk.js.map",
     "index.html": "/genetic-pcb/index.html",
-    "static/css/main.b7697089.chunk.css.map": "/genetic-pcb/static/css/main.b7697089.chunk.css.map",
+    "static/css/main.cefde400.chunk.css.map": "/genetic-pcb/static/css/main.cefde400.chunk.css.map",
     "static/js/2.bead5d99.chunk.js.LICENSE.txt": "/genetic-pcb/static/js/2.bead5d99.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.14edefb4.js",
     "static/js/2.bead5d99.chunk.js",
-    "static/css/main.b7697089.chunk.css",
-    "static/js/main.ecb1c935.chunk.js"
+    "static/css/main.cefde400.chunk.css",
+    "static/js/main.731663b7.chunk.js"
   ]
 }
