@@ -47,5 +47,6 @@
     "prettier": "^2.2.1",
     "tailwind-scrollbar": "^1.2.4",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4"
-  }
+  },
+  "homepage" : "http://sitarz.tk/genetic-pcb"
 }
