@@ -8,7 +8,7 @@ export const segmentToCoordinates = (start: Pair<number>, segment: Segment): Pai
   const [startX, startY] = start;
   const [distance, direction] = segment;
   const [modifierX, modifierY] = directionValue(direction);
-  return times(distance, (n) => [startX + n * modifierX, startY + n * modifierY]);
+  return times(distance, (n) => [startX + (n + 1) * modifierX, startY + (n + 1) * modifierY]);
 };
 
 export const mutateSegment = (segment: Segment, width: number, height: number): Segment[] => {

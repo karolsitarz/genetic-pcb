@@ -34,8 +34,8 @@ export const generateProblem = (
     height,
     connectors,
     population,
-    duplicationWeights: times(connectors.length, () => 1),
-    outOfBoundsWeights: times(connectors.length, () => 1),
+    duplicationWeights: times(connectors.length, () => width * height),
+    outOfBoundsWeights: times(connectors.length, () => width * height),
     mutationChance,
   };
 };
