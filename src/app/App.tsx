@@ -8,6 +8,14 @@ import { Connector, generateProblem, Problem, runProblem } from "logic/problem";
 import { Individual } from "logic/individual";
 import { BoardCanvas } from "components/BoardCanvas";
 
+declare global {
+  interface Window {
+    _isRunning: boolean;
+    _setIndividual: (arg: Individual) => void;
+    _setGeneration: (arg: number) => void;
+  }
+}
+
 export const App = () => {
   const [width, setWidth] = useState(8);
   const [height, setHeight] = useState(8);
@@ -18,13 +26,13 @@ export const App = () => {
 
   const [problem, setProblem] = useState<Problem>();
   const [individual, setIndividual] = useState<Individual>();
+  const [generation, setGeneration] = useState(0);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any)._setIndividual = setIndividual;
+  window._setIndividual = setIndividual;
+  window._setGeneration = setGeneration;
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any)._isRunning = !!problem;
+    window._isRunning = !!problem;
     if (!problem) return;
     runProblem(problem);
   }, [problem]);
@@ -195,12 +203,16 @@ export const App = () => {
           </>
         )}
         {problem && (
-          <button
-            className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg my-auto"
-            onClick={() => setProblem(undefined)}
-          >
-            Stop
-          </button>
+          <div className="d-flex justify-center flex-col my-auto">
+            <h1 className="font-bold text-gray-700">Generation</h1>
+            <div className="mx-auto mb-4">{generation}</div>
+            <button
+              className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg w-full"
+              onClick={() => setProblem(undefined)}
+            >
+              Stop
+            </button>
+          </div>
         )}
       </aside>
     </main>

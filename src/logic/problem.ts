@@ -106,15 +106,13 @@ export const runProblem = async (problem: Problem) => {
   let i = 0;
 
   const run = async (problem: Problem, best: Individual) => {
-    console.log(i);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(window as any)._isRunning) {
+    window._setGeneration(i);
+    if (!window._isRunning) {
       console.log(problem, best);
       return;
     }
     if (i++ % 5 === 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any)._setIndividual(best);
+      window._setIndividual(best);
     }
 
     const populated = populate(problem);
