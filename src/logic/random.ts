@@ -7,9 +7,10 @@ export const roulette = <T>(list: [T, number][]) => {
     ({ weighed, progress }, [item, weight]) => {
       const topBound = roundTo(weight / sum, 4);
       if (topBound === 0) return { weighed, progress };
+      const newProgress = topBound + progress;
       return {
-        weighed: [...weighed, [item, topBound]] as typeof list,
-        progress: progress + topBound,
+        weighed: [...weighed, [item, newProgress]] as typeof list,
+        progress: newProgress,
       };
     },
     { weighed: [] as typeof list, progress: 0 },
