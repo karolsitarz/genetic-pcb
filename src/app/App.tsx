@@ -38,6 +38,8 @@ export const App = () => {
   }, [problem]);
 
   useEffect(() => {
+    if (selected) setSelected(null);
+
     const newConnectors = connectors.filter(
       ([start, end]) => start[0] < width && start[1] < height && end[0] < width && end[1] < height,
     );
@@ -110,7 +112,7 @@ export const App = () => {
                         }}
                       >
                         <div
-                          className={`bg-${color}-${intensity} ${
+                          className={`transition-colors bg-${color}-${intensity} ${
                             isSelected ? "ring-4 ring-gray-300" : ""
                           } ${
                             hasConnector ? `ring-4 ring-${color}-100` : "group-hover:bg-gray-600"
