@@ -1,9 +1,18 @@
 import styled from "@emotion/styled";
 
-export const CanvasContainer = styled.div`
+type Props = {
+  width: number;
+  height: number;
+};
+
+export const CanvasContainer = styled.div<Props>`
   width: 100%;
-  max-width: 75%;
-  max-height: 75%;
+
+  &::before {
+    content: "";
+    display: block;
+    padding-bottom: ${({ height, width }) => (height * 100) / width}%;
+  }
 
   > div > button {
     width: 100%;

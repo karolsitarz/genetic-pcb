@@ -72,7 +72,10 @@ export const App = () => {
       <section className="flex-1 flex items-center justify-center flex-col">
         <CanvasContainer
           className="bg-white relative rounded-xl shadow-2xl"
-          style={{ aspectRatio: `${width} / ${height}` }}
+          style={{
+            maxWidth: `min(calc(${width} / ${height} * 75%), 75%, calc(${width} / ${height} * 75vh))`,
+          }}
+          {...{ width, height }}
         >
           {problem && <BoardCanvas {...{ problem, individual }} />}
           {!problem && (
