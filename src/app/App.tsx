@@ -23,6 +23,13 @@ export const App = () => {
   (window as any)._setIndividual = setIndividual;
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any)._isRunning = !!problem;
+    if (!problem) return;
+    runProblem(problem);
+  }, [problem]);
+
+  useEffect(() => {
     const newConnectors = connectors.filter(
       ([start, end]) => start[0] < width && start[1] < height && end[0] < width && end[1] < height,
     );
@@ -48,7 +55,6 @@ export const App = () => {
 
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population, mutation);
-    runProblem(problem);
     setProblem(problem);
     setIndividual(undefined);
   };
