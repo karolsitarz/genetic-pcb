@@ -107,10 +107,7 @@ export const runProblem = async (problem: Problem) => {
 
   const run = async (problem: Problem, best: Individual) => {
     window._setGeneration(i);
-    if (!window._isRunning) {
-      console.log(problem, best);
-      return;
-    }
+    if (!window._isRunning) return;
     if (i++ % 5 === 0) {
       window._setIndividual(best);
     }

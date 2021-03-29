@@ -121,7 +121,7 @@ export const App = () => {
           )}
         </CanvasContainer>
       </section>
-      <aside className="max-w-sm w-1/3 flex flex-col p-8 border-l-2">
+      <aside className="max-w-xs w-1/2 flex flex-col p-8 border-l-2">
         {!problem && (
           <>
             <section>
