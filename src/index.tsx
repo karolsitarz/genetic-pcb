@@ -10,6 +10,7 @@ declare global {
     __isRunning: boolean;
     __drawBoard: (problem: Problem) => void;
     __drawIndividual: (individual: Individual, problem: Problem) => void;
+    __drawClear: () => void;
     __updateGeneration: (number: number) => void;
   }
 }

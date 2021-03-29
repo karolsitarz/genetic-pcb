@@ -9,6 +9,8 @@ import {
 } from "logic/individual";
 import { roulette, rouletteDraw } from "logic/random";
 
+const breakAsync = () => new Promise((resolve) => setTimeout(resolve, 0));
+
 export type Connector = Pair<Pair<number>>;
 
 export type Problem = {
@@ -28,7 +30,7 @@ export const generateProblem = (
   populationSize: number,
   mutationChance: number,
 ): Problem => {
-  const population = times(populationSize, () => generateIndividual(width, height, connectors));
+  const population = times(populationSize, () => ({ paths: [] } as Individual));
   return {
     width,
     height,
@@ -38,6 +40,12 @@ export const generateProblem = (
     outOfBoundsWeights: times(connectors.length, () => width * height),
     mutationChance,
   };
+};
+
+export const initializePopulation = (problem: Problem): Problem => {
+  const { width, height, connectors } = problem;
+  const population = problem.population.map(() => generateIndividual(width, height, connectors));
+  return { ...problem, population };
 };
 
 export const calculateProblemFitness = (problem: Problem): Problem => {
@@ -104,11 +112,16 @@ export const populate = (problem: Problem): Problem => {
 
 export const runProblem = async (problem: Problem) => {
   let i = 0;
+  window.__drawClear();
   window.__drawBoard(problem);
+  window.__updateGeneration(0);
 
   const run = async (problem: Problem, best: Individual) => {
     window.__updateGeneration(i);
-    if (!window.__isRunning) return;
+    if (!window.__isRunning) {
+      window.__drawClear();
+      return;
+    }
     if (i++ % 5 === 0) {
       window.__drawIndividual(best, problem);
     }
@@ -117,11 +130,12 @@ export const runProblem = async (problem: Problem) => {
     const calculated = calculateProblemFitness(populated);
     const adapted = adapt(best, calculated);
     const bestIndividual = getPopulationBest(adapted);
-    await new Promise((resolve) => setTimeout(resolve, 1));
+    await breakAsync(); // this is here to escape the loop and let react update the DOM
     await run(adapted, bestIndividual);
   };
 
-  const calculated = calculateProblemFitness(problem);
+  const initialized = initializePopulation(problem);
+  const calculated = calculateProblemFitness(initialized);
   const best = getPopulationBest(calculated);
   await run(calculated, best);
 };

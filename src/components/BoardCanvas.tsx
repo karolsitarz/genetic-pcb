@@ -17,6 +17,15 @@ type Props = {
 export const BoardCanvas = ({ height, width, isRunning }: Props) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
+  window.__drawClear = () => {
+    const canvas = ref.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
   window.__drawBoard = (problem: Problem) => {
     const { width, height, connectors } = problem;
     const canvas = ref.current;

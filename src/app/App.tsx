@@ -4,7 +4,7 @@ import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
 import { compareTuples, Pair, times } from "util/array";
-import { Connector, generateProblem, runProblem } from "logic/problem";
+import { Connector, generateProblem, Problem, runProblem } from "logic/problem";
 import { BoardCanvas } from "components/BoardCanvas";
 
 export const App = () => {
@@ -15,7 +15,7 @@ export const App = () => {
   const [selected, setSelected] = useState<Pair<number> | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>([]);
 
-  const [isRunning, setIsRunning] = useState(false);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const generationRef = useRef<HTMLDivElement>(null);
 
   window.__updateGeneration = (number) => {
@@ -34,7 +34,7 @@ export const App = () => {
   }, [width, height]);
 
   const handleConnectorClick = (position: Pair<number>, hasConnector: boolean) => () => {
-    if (isRunning) return;
+    if (problem) return;
     if (hasConnector) return;
     if (connectors.length === COLORS.length * INTENSITY.length) return;
 
@@ -51,15 +51,19 @@ export const App = () => {
   };
 
   const handleStart = () => {
-    const problem = generateProblem(width, height, connectors, population, mutation);
     window.__isRunning = true;
-    setIsRunning(true);
-    runProblem(problem);
+    const problem = generateProblem(width, height, connectors, population, mutation);
+    setProblem(problem);
   };
+
+  useEffect(() => {
+    if (!problem) return;
+    runProblem(problem);
+  }, [problem]);
 
   const handleStop = () => {
     window.__isRunning = false;
-    setIsRunning(false);
+    setProblem(null);
   };
 
   return (
@@ -73,8 +77,8 @@ export const App = () => {
             }}
             {...{ width, height }}
           >
-            <BoardCanvas {...{ width, height, isRunning }} />
-            {!isRunning && (
+            <BoardCanvas {...{ width, height, isRunning: !!problem }} />
+            {!problem && (
               <div className="absolute">
                 {times(height, (y) =>
                   times(width, (x) => {
@@ -95,10 +99,10 @@ export const App = () => {
                       <button
                         key={`${x}-${y}`}
                         className={`absolute ${
-                          !hasConnector && !isRunning ? "group" : "cursor-default"
+                          !hasConnector && !problem ? "group" : "cursor-default"
                         }`}
                         onClick={handleConnectorClick(coordinates, hasConnector)}
-                        disabled={isRunning || hasConnector}
+                        disabled={problem || hasConnector}
                         style={{
                           left: `calc(100% / ${width} * ${x})`,
                           top: `calc(100% / ${height} * ${y})`,
@@ -121,7 +125,7 @@ export const App = () => {
         </section>
         <aside className="md:max-w-xs md:w-1/2 p-8 pt-12 md:pt-8 md:border-l-2 bg-gray-100 z-10 rounded-t-3xl md:rounded-none shadow-blur md:shadow-none md:max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
           <div className="flex flex-col max-w-sm mx-auto">
-            {!isRunning && (
+            {!problem && (
               <>
                 <section>
                   <RangeInput value={width} onChange={setWidth} min={5} max={20} label="Width" />
@@ -172,7 +176,7 @@ export const App = () => {
                     value={population}
                     onChange={setPopulation}
                     min={50}
-                    max={1000}
+                    max={500}
                     step={50}
                     label="Population"
                   />
@@ -205,7 +209,7 @@ export const App = () => {
                 )}
               </>
             )}
-            {isRunning && (
+            {problem && (
               <div className="d-flex justify-center flex-col my-auto">
                 <h1 className="font-bold text-gray-700">Generation</h1>
                 <div ref={generationRef} className="mx-auto mb-4" />
