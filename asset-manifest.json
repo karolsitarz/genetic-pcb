@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/genetic-pcb/static/css/main.ea80add5.chunk.css",
-    "main.js": "/genetic-pcb/static/js/main.84b857bf.chunk.js",
-    "main.js.map": "/genetic-pcb/static/js/main.84b857bf.chunk.js.map",
+    "main.js": "/genetic-pcb/static/js/main.beb3ef2e.chunk.js",
+    "main.js.map": "/genetic-pcb/static/js/main.beb3ef2e.chunk.js.map",
     "runtime-main.js": "/genetic-pcb/static/js/runtime-main.14edefb4.js",
     "runtime-main.js.map": "/genetic-pcb/static/js/runtime-main.14edefb4.js.map",
     "static/js/2.086f9e0c.chunk.js": "/genetic-pcb/static/js/2.086f9e0c.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.14edefb4.js",
     "static/js/2.086f9e0c.chunk.js",
     "static/css/main.ea80add5.chunk.css",
-    "static/js/main.84b857bf.chunk.js"
+    "static/js/main.beb3ef2e.chunk.js"
   ]
 }
