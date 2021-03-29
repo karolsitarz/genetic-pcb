@@ -16,50 +16,63 @@ export const generateIndividual = (
   return { paths };
 };
 
-export const getOutOfBounds = (
-  coordinates: ReturnType<typeof pathToCoordinates>,
-  width: number,
-  height: number,
-) =>
-  coordinates
-    .filter(([x, y]) => x < 0 || y < 0 || x >= width || y >= height)
-    .reduce(
-      (grouped, [, , index]) => ({
-        ...grouped,
-        [index]: (grouped?.[index] ?? 0) + 1,
-      }),
-      {} as { [key: number]: number },
-    );
-
-export const getDuplicates = (coordinates: ReturnType<typeof pathToCoordinates>) =>
-  coordinates.reduce(
-    (grouped, [x, y, index]) => ({
-      ...grouped,
-      [`${x}-${y}`]: [...(grouped?.[`${x}-${y}`] ?? []), index],
-    }),
-    {} as { [key: string]: number[] },
-  );
-
-export const getFitness = (individual: Individual, problem: Problem): number => {
+export const individualToCoordinates = (individual: Individual) => {
   const { paths } = individual;
-  const { width, height, outOfBoundsWeights, duplicationWeights } = problem;
-  const coordinates = paths.reduce(
+  return paths.reduce(
     (list, path) => [...list, ...pathToCoordinates(path)],
     [] as ReturnType<typeof pathToCoordinates>,
   );
+};
 
-  const outOfBounds = Object.entries(getOutOfBounds(coordinates, width, height)).reduce<number>(
+export const errorValues = (individual: Individual, problem: Problem) => {
+  const { width, height } = problem;
+  const coordinates = individualToCoordinates(individual);
+
+  const outOfBounds = Object.entries(
+    coordinates
+      .filter(([x, y]) => x < 0 || y < 0 || x >= width || y >= height)
+      .reduce(
+        (grouped, [, , index]) => ({
+          ...grouped,
+          [index]: (grouped?.[index] ?? 0) + 1,
+        }),
+        {} as { [key: number]: number },
+      ),
+  );
+
+  const duplication = Object.values(
+    coordinates.reduce(
+      (grouped, [x, y, index]) => ({
+        ...grouped,
+        [`${x}-${y}`]: [...(grouped?.[`${x}-${y}`] ?? []), index],
+      }),
+      {} as { [key: string]: number[] },
+    ),
+  ).filter((values) => values.length > 1);
+
+  const length = coordinates.length;
+
+  return { outOfBounds, duplication, length };
+};
+
+export const getFitness = (individual: Individual, problem: Problem): number => {
+  const { paths } = individual;
+  const { outOfBoundsWeights, duplicationWeights } = problem;
+  const errors = errorValues(individual, problem);
+
+  const outOfBounds = errors.outOfBounds.reduce<number>(
     (value, [index, exp]) => value + outOfBoundsWeights[parseInt(index)] ** exp,
     0,
   );
-  const duplicates = Object.values(getDuplicates(coordinates)).reduce(
-    (value, indexes) => indexes.reduce((value, index) => value * duplicationWeights[index], 1),
+
+  const duplication = errors.duplication.reduce(
+    (value, indexes) =>
+      value + indexes.reduce((value, index) => value * duplicationWeights[index], 1),
     0,
   );
-  const length = coordinates.length;
   const segmentsCount = paths.reduce((value, { segments }) => value + segments.length, 0);
 
-  return 1 / (length + segmentsCount + outOfBounds + duplicates);
+  return 1 / (errors.length + segmentsCount + outOfBounds + duplication);
 };
 
 export const calculateFitness = (individual: Individual, problem: Problem) => {
