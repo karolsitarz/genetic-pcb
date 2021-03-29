@@ -104,12 +104,13 @@ export const populate = (problem: Problem): Problem => {
 
 export const runProblem = async (problem: Problem) => {
   let i = 0;
+  window.__drawBoard(problem);
 
   const run = async (problem: Problem, best: Individual) => {
-    window._setGeneration(i);
-    if (!window._isRunning) return;
+    window.__updateGeneration(i);
+    if (!window.__isRunning) return;
     if (i++ % 5 === 0) {
-      window._setIndividual(best);
+      window.__drawIndividual(best, problem);
     }
 
     const populated = populate(problem);

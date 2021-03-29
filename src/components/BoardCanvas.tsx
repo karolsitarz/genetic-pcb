@@ -1,23 +1,24 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Individual } from "logic/individual";
 import { Problem } from "logic/problem";
 import { directionValue } from "logic/direction";
 import { getHSL } from "util/color";
 
-type Props = {
-  individual?: Individual;
-  problem: Problem;
-};
-
 const UNIT = 50;
 const WIDTH = 6;
 const translate = (pos: number) => (pos + 1) * UNIT;
 
-export const BoardCanvas = ({ individual, problem }: Props) => {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const { width, height, connectors } = problem;
+type Props = {
+  width: number;
+  height: number;
+  isRunning: boolean;
+};
 
-  useEffect(() => {
+export const BoardCanvas = ({ height, width, isRunning }: Props) => {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  window.__drawBoard = (problem: Problem) => {
+    const { width, height, connectors } = problem;
     const canvas = ref.current;
     if (!canvas) return;
 
@@ -47,8 +48,15 @@ export const BoardCanvas = ({ individual, problem }: Props) => {
       ctx.fill();
       ctx.closePath();
     }
+  };
 
-    if (!individual) return;
+  window.__drawIndividual = (individual: Individual, problem: Problem) => {
+    window.__drawBoard(problem);
+    const canvas = ref.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     const { paths } = individual;
 
     ctx.lineWidth = WIDTH;
@@ -76,16 +84,16 @@ export const BoardCanvas = ({ individual, problem }: Props) => {
       ctx.stroke();
       ctx.closePath();
     }
-  }, [individual, problem]);
+  };
 
   return (
-    <>
-      <canvas
-        ref={ref}
-        className="absolute left-0 top-0 bottom-0 right-0 w-full h-full"
-        width={(width + 1) * UNIT}
-        height={(height + 1) * UNIT}
-      />
-    </>
+    <canvas
+      ref={ref}
+      className={`absolute left-0 top-0 bottom-0 right-0 w-full h-full ${
+        !isRunning ? "pointer-events-none opacity-0" : ""
+      }`}
+      width={(width + 1) * UNIT}
+      height={(height + 1) * UNIT}
+    />
   );
 };

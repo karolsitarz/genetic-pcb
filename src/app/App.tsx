@@ -1,20 +1,11 @@
 import { CanvasContainer } from "app/App.styled";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
 import { compareTuples, Pair, times } from "util/array";
-import { Connector, generateProblem, Problem, runProblem } from "logic/problem";
-import { Individual } from "logic/individual";
+import { Connector, generateProblem, runProblem } from "logic/problem";
 import { BoardCanvas } from "components/BoardCanvas";
-
-declare global {
-  interface Window {
-    _isRunning: boolean;
-    _setIndividual: (arg: Individual) => void;
-    _setGeneration: (arg: number) => void;
-  }
-}
 
 export const App = () => {
   const [width, setWidth] = useState(8);
@@ -24,18 +15,14 @@ export const App = () => {
   const [selected, setSelected] = useState<Pair<number> | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>([]);
 
-  const [problem, setProblem] = useState<Problem>();
-  const [individual, setIndividual] = useState<Individual>();
-  const [generation, setGeneration] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const generationRef = useRef<HTMLDivElement>(null);
 
-  window._setIndividual = setIndividual;
-  window._setGeneration = setGeneration;
-
-  useEffect(() => {
-    window._isRunning = !!problem;
-    if (!problem) return;
-    runProblem(problem);
-  }, [problem]);
+  window.__updateGeneration = (number) => {
+    const generation = generationRef?.current;
+    if (!generation) return;
+    generation.innerText = number.toString();
+  };
 
   useEffect(() => {
     if (selected) setSelected(null);
@@ -47,7 +34,7 @@ export const App = () => {
   }, [width, height]);
 
   const handleConnectorClick = (position: Pair<number>, hasConnector: boolean) => () => {
-    if (problem) return;
+    if (isRunning) return;
     if (hasConnector) return;
     if (connectors.length === COLORS.length * INTENSITY.length) return;
 
@@ -65,8 +52,14 @@ export const App = () => {
 
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population, mutation);
-    setProblem(problem);
-    setIndividual(undefined);
+    window.__isRunning = true;
+    setIsRunning(true);
+    runProblem(problem);
+  };
+
+  const handleStop = () => {
+    window.__isRunning = false;
+    setIsRunning(false);
   };
 
   return (
@@ -80,8 +73,8 @@ export const App = () => {
             }}
             {...{ width, height }}
           >
-            {problem && <BoardCanvas {...{ problem, individual }} />}
-            {!problem && (
+            <BoardCanvas {...{ width, height, isRunning }} />
+            {!isRunning && (
               <div className="absolute">
                 {times(height, (y) =>
                   times(width, (x) => {
@@ -102,10 +95,10 @@ export const App = () => {
                       <button
                         key={`${x}-${y}`}
                         className={`absolute ${
-                          !hasConnector && !problem ? "group" : "cursor-default"
+                          !hasConnector && !isRunning ? "group" : "cursor-default"
                         }`}
                         onClick={handleConnectorClick(coordinates, hasConnector)}
-                        disabled={problem || hasConnector}
+                        disabled={isRunning || hasConnector}
                         style={{
                           left: `calc(100% / ${width} * ${x})`,
                           top: `calc(100% / ${height} * ${y})`,
@@ -128,7 +121,7 @@ export const App = () => {
         </section>
         <aside className="md:max-w-xs md:w-1/2 p-8 pt-12 md:pt-8 md:border-l-2 bg-gray-100 z-10 rounded-t-3xl md:rounded-none shadow-blur md:shadow-none md:max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
           <div className="flex flex-col max-w-sm mx-auto">
-            {!problem && (
+            {!isRunning && (
               <>
                 <section>
                   <RangeInput value={width} onChange={setWidth} min={5} max={20} label="Width" />
@@ -212,13 +205,13 @@ export const App = () => {
                 )}
               </>
             )}
-            {problem && (
+            {isRunning && (
               <div className="d-flex justify-center flex-col my-auto">
                 <h1 className="font-bold text-gray-700">Generation</h1>
-                <div className="mx-auto mb-4">{generation}</div>
+                <div ref={generationRef} className="mx-auto mb-4" />
                 <button
                   className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg w-full"
-                  onClick={() => setProblem(undefined)}
+                  onClick={handleStop}
                 >
                   Stop
                 </button>
