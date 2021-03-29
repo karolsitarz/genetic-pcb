@@ -39,3 +39,5 @@ export const mutateSegment = (segment: Segment, width: number, height: number): 
     [mutationDistance, rotate(mutationDirection, 180)],
   ];
 };
+
+export const cloneSegment = (segment: Segment): Segment => [segment[0], segment[1]];

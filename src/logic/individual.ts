@@ -1,5 +1,6 @@
-import { generatePath, Path, pathToCoordinates } from "logic/path";
+import { clonePath, generatePath, Path, pathToCoordinates } from "logic/path";
 import { Connector, Problem } from "logic/problem";
+import { randomBetween } from "util/number";
 
 export type Individual = {
   paths: Path[];
@@ -63,4 +64,16 @@ export const getFitness = (individual: Individual, problem: Problem): number => 
 
 export const calculateFitness = (individual: Individual, problem: Problem) => {
   individual.fitness = getFitness(individual, problem);
+};
+
+export const crossOver = (
+  { paths: pathsA }: Individual,
+  { paths: pathsB }: Individual,
+): Individual => {
+  const splitPoint = randomBetween(0, pathsA.length + 1);
+  const paths = [
+    ...pathsA.slice(0, splitPoint).map((path) => clonePath(path)),
+    ...pathsB.slice(splitPoint).map((path) => clonePath(path)),
+  ];
+  return { paths };
 };

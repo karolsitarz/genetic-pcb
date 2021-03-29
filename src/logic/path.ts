@@ -1,5 +1,5 @@
-import { compareTuples, Pair, splitAt } from "util/array";
-import { mutateSegment, Segment, segmentToCoordinates } from "logic/segment";
+import { clonePair, compareTuples, Pair, splitAt } from "util/array";
+import { cloneSegment, mutateSegment, Segment, segmentToCoordinates } from "logic/segment";
 import { Connector, Problem } from "logic/problem";
 import { roulette } from "logic/random";
 import { Direction, isHorizontal, isVertical, rotate } from "logic/direction";
@@ -140,3 +140,9 @@ export const mutate = (path: Path, problem: Problem) => {
 
   return mergeSegments(newSegments);
 };
+
+export const clonePath = ({ segments, start, index }: Path): Path => ({
+  index,
+  start: clonePair(start),
+  segments: segments.map((segment) => cloneSegment(segment)),
+});
