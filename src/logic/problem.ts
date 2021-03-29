@@ -1,5 +1,13 @@
 import { Pair, times } from "util/array";
-import { calculateFitness, errorValues, generateIndividual, Individual } from "logic/individual";
+import {
+  calculateFitness,
+  crossOver,
+  errorValues,
+  generateIndividual,
+  Individual,
+  mutateIndividual,
+} from "logic/individual";
+import { roulette, rouletteDraw } from "logic/random";
 
 export type Connector = Pair<Pair<number>>;
 
@@ -32,8 +40,9 @@ export const generateProblem = (
   };
 };
 
-export const calculatePopulationFitness = (problem: Problem) => {
-  problem.population.forEach((individual) => calculateFitness(individual, problem));
+export const calculateProblemFitness = (problem: Problem): Problem => {
+  const population = problem.population.map((individual) => calculateFitness(individual, problem));
+  return { ...problem, population };
 };
 
 export const getPopulationBest = (problem: Problem) => {
@@ -46,10 +55,10 @@ export const getPopulationBest = (problem: Problem) => {
   }, population[0]);
 };
 
-export const adapt = (previousBest: Individual, problem: Problem) => {
+export const adapt = (previousBest: Individual, problem: Problem): Problem => {
   const { duplicationWeights, outOfBoundsWeights } = problem;
   const currentBest = getPopulationBest(problem);
-  if (previousBest <= currentBest) return false;
+  if (previousBest <= currentBest) return problem;
 
   const errors = errorValues(currentBest, problem);
 
@@ -69,6 +78,39 @@ export const adapt = (previousBest: Individual, problem: Problem) => {
     duplication.has(index) ? weight + 1 : weight,
   );
 
-  problem.outOfBoundsWeights = newOutOfBoundsWeights;
-  problem.duplicationWeights = newDuplicationWeights;
+  return {
+    ...problem,
+    outOfBoundsWeights: newOutOfBoundsWeights,
+    duplicationWeights: newDuplicationWeights,
+  };
+};
+
+export const populate = (problem: Problem): Problem => {
+  const { population } = problem;
+  const weighed = roulette(
+    population.map((individual) => {
+      if (individual.fitness == null) throw new Error("Fitness not calculated");
+      return [individual, individual.fitness];
+    }),
+  );
+
+  const newPopulation = population.map(() => {
+    const parents = rouletteDraw(weighed);
+    const child = crossOver(parents[0], parents[1]);
+    return mutateIndividual(child, problem);
+  });
+
+  return { ...problem, population: newPopulation };
+};
+
+let i = 0;
+export const runProblem = (problem: Problem, best?: Individual) => {
+  if (i++ == 10) return;
+  console.log(i);
+  const calculated = calculateProblemFitness(problem);
+  const bestIndividual = best ?? getPopulationBest(calculated);
+
+  const adapted = adapt(bestIndividual, calculated);
+  const newProblem = populate(adapted);
+  runProblem(newProblem);
 };

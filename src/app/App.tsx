@@ -4,7 +4,7 @@ import { RangeInput } from "components/RangeInput";
 import { COLORS, getColor, INTENSITY } from "util/color";
 import { FiTrash2 } from "react-icons/fi";
 import { compareTuples, Pair, times } from "util/array";
-import { Connector, generateProblem, Problem } from "logic/problem";
+import { Connector, generateProblem, Problem, runProblem } from "logic/problem";
 import { Individual } from "logic/individual";
 import { BoardCanvas } from "components/BoardCanvas";
 
@@ -45,8 +45,9 @@ export const App = () => {
 
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population, mutation);
-    setProblem(problem);
-    setIndividual(undefined);
+    runProblem(problem);
+    // setProblem(problem);
+    // setIndividual(undefined);
   };
 
   return (

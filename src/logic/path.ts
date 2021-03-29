@@ -1,7 +1,7 @@
 import { clonePair, compareTuples, Pair, splitAt } from "util/array";
 import { cloneSegment, mutateSegment, Segment, segmentToCoordinates } from "logic/segment";
 import { Connector, Problem } from "logic/problem";
-import { roulette } from "logic/random";
+import { roulette, rouletteDraw } from "logic/random";
 import { Direction, isHorizontal, isVertical, rotate } from "logic/direction";
 import { randomBetween } from "util/number";
 
@@ -59,7 +59,8 @@ export const generatePath = (
       [Direction.Down, downValue],
     ];
 
-    const [direction] = roulette(directions, 1);
+    const [direction] = rouletteDraw(roulette(directions), 1);
+
     const maxDistance =
       direction === Direction.Up
         ? currentY
@@ -123,7 +124,7 @@ export const mergeSegments = (segments: Segment[]): Segment[] => {
   }, [] as Segment[]);
 };
 
-export const mutate = (path: Path, problem: Problem) => {
+export const mutatePath = (path: Path, problem: Problem) => {
   if (randomBetween(0, 100) > problem.mutationChance) return path;
 
   const { segments } = path;
@@ -133,12 +134,13 @@ export const mutate = (path: Path, problem: Problem) => {
 
   const mutation = mutateSegment(segment, width, height);
   const newSegments = [
-    ...segment.slice(0, segmentId),
+    ...segments.slice(0, segmentId),
     ...mutation,
-    ...segment.slice(segmentId + 1),
+    ...segments.slice(segmentId + 1),
   ] as Segment[];
 
-  return mergeSegments(newSegments);
+  const merged = mergeSegments(newSegments);
+  return { ...path, segments: merged };
 };
 
 export const clonePath = ({ segments, start, index }: Path): Path => ({

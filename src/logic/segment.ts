@@ -13,7 +13,7 @@ export const segmentToCoordinates = (start: Pair<number>, segment: Segment): Pai
 
 export const mutateSegment = (segment: Segment, width: number, height: number): Segment[] => {
   const [distance, direction] = segment;
-  const mutationDirection = rotate(direction, randomBool() ? 90 : -90);
+  const mutationDirection = rotate(direction, randomBool() ? 90 : 270);
   const mutationDistance = randomBetween(1, isHorizontal(direction) ? height : width);
 
   if (distance == 1 || randomBool())

@@ -14,8 +14,8 @@ export const rotate = (direction: Direction, degrees: number) => {
 };
 
 export const directionOffset = (direction: Direction): number => {
-  const offset = DIRECTIONS.indexOf(direction);
-  if (offset < 0) throw new Error();
+  const offset = DIRECTIONS.findIndex((item) => item === direction);
+  if (offset < 0) throw new Error("Incorrect direction passed");
   return offset;
 };
 
@@ -24,7 +24,7 @@ export const directionValue = (direction: Direction): Pair<number> => {
   if (direction === Direction.Down) return [0, 1];
   if (direction === Direction.Left) return [-1, 0];
   if (direction === Direction.Right) return [1, 0];
-  throw new Error();
+  throw new Error("Incorrect direction passed");
 };
 
 export const isHorizontal = (direction: Direction) =>
