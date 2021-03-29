@@ -15,7 +15,7 @@ module.exports = {
   theme: {
     extend: {
       height: {
-        screenpeek: "calc(100vh - 5rem)",
+        screenpeek: "90vh",
       },
       boxShadow: {
         blur: "rgba(0, 0, 0, 0.3) 0 0 50px 0",

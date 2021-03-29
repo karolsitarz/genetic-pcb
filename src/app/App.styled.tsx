@@ -14,22 +14,28 @@ export const CanvasContainer = styled.div<Props>`
     padding-bottom: ${({ height, width }) => (height * 100) / width}%;
   }
 
-  > div > button {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  > div {
+    width: calc(100% * ${({ width }) => `${width} / ${width + 1}`});
+    height: calc(100% * ${({ height }) => `${height} / ${height + 1}`});
+    left: calc(100% / ${({ width }) => width + 1} / 2);
+    top: calc(100% / ${({ height }) => height + 1} / 2);
 
-    div {
-      width: 75%;
-      border-radius: 50%;
-      max-width: 0.75rem;
-      &::after {
-        content: "";
-        padding-bottom: 100%;
-        display: block;
+    > button {
+      width: calc(100% / ${({ width }) => width});
+      height: calc(100% / ${({ height }) => height});      
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      div {
+        width: 75%;
+        border-radius: 50%;
+        max-width: 0.75rem;
+        &::after {
+          content: "";
+          padding-bottom: 100%;
+          display: block;
+        }
       }
     }
-  }
 `;

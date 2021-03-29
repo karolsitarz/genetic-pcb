@@ -74,19 +74,13 @@ export const App = () => {
           <CanvasContainer
             className="bg-white relative rounded-xl shadow-2xl"
             style={{
-              maxWidth: `min(calc(${width} / ${height} * 80%), 80%, calc(${width} / ${height} * 80vh))`,
+              maxWidth: `min(max(calc(${width} / ${height} * 80%), calc(${height} / ${width} * 70vh)), 80%, calc(${width} / ${height} * 70vh))`,
             }}
             {...{ width, height }}
           >
             {problem && <BoardCanvas {...{ problem, individual }} />}
             {!problem && (
-              <div
-                className="absolute left-0 top-0 bottom-0 right-0 w-full h-full grid place-items-center"
-                style={{
-                  gridTemplateColumns: `1fr repeat(${width}, 2fr) 1fr`,
-                  gridTemplateRows: `1fr repeat(${height}, 2fr) 1fr`,
-                }}
-              >
+              <div className="absolute">
                 {times(height, (y) =>
                   times(width, (x) => {
                     const coordinates: Pair<number> = [x, y];
@@ -105,11 +99,14 @@ export const App = () => {
                     return (
                       <button
                         key={`${x}-${y}`}
-                        className={`${!hasConnector && !problem ? "group" : "cursor-default"}`}
+                        className={`absolute ${
+                          !hasConnector && !problem ? "group" : "cursor-default"
+                        }`}
                         onClick={handleConnectorClick(coordinates, hasConnector)}
                         disabled={problem || hasConnector}
                         style={{
-                          gridArea: `${y + 2} / ${x + 2} / span 1 / span 1`,
+                          left: `calc(100% / ${width} * ${x})`,
+                          top: `calc(100% / ${height} * ${y})`,
                         }}
                       >
                         <div
