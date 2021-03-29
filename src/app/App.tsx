@@ -74,7 +74,7 @@ export const App = () => {
           <CanvasContainer
             className="bg-white relative rounded-xl shadow-2xl"
             style={{
-              maxWidth: `min(calc(${width} / ${height} * 75%), 75%, calc(${width} / ${height} * 75vh))`,
+              maxWidth: `min(calc(${width} / ${height} * 80%), 80%, calc(${width} / ${height} * 80vh))`,
             }}
             {...{ width, height }}
           >
@@ -127,7 +127,7 @@ export const App = () => {
             )}
           </CanvasContainer>
         </section>
-        <aside className="md:max-w-xs md:w-1/2 p-8 pt-12 md:pt-8 md:border-l-2 bg-gray-100 z-10 rounded-t-3xl md:rounded-none shadow-blur md:shadow-none max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+        <aside className="md:max-w-xs md:w-1/2 p-8 pt-12 md:pt-8 md:border-l-2 bg-gray-100 z-10 rounded-t-3xl md:rounded-none shadow-blur md:shadow-none md:max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
           <div className="flex flex-col max-w-sm mx-auto">
             {!problem && (
               <>
