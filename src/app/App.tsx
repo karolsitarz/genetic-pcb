@@ -19,6 +19,9 @@ export const App = () => {
   const [problem, setProblem] = useState<Problem>();
   const [individual, setIndividual] = useState<Individual>();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any)._setIndividual = setIndividual;
+
   useEffect(() => {
     const newConnectors = connectors.filter(
       ([start, end]) => start[0] < width && start[1] < height && end[0] < width && end[1] < height,
@@ -46,13 +49,13 @@ export const App = () => {
   const handleStart = () => {
     const problem = generateProblem(width, height, connectors, population, mutation);
     runProblem(problem);
-    // setProblem(problem);
-    // setIndividual(undefined);
+    setProblem(problem);
+    setIndividual(undefined);
   };
 
   return (
-    <main className="w-screen h-screen flex items-stretch">
-      <section className="flex-1 bg-gray-100 flex items-center justify-center flex-col">
+    <main className="w-screen bg-gray-100 h-screen flex items-stretch">
+      <section className="flex-1 flex items-center justify-center flex-col">
         <CanvasContainer
           className="bg-white relative rounded-xl shadow-2xl"
           style={{ aspectRatio: `${width} / ${height}` }}
@@ -104,115 +107,96 @@ export const App = () => {
           )}
         </CanvasContainer>
       </section>
-      {!problem && (
-        <aside className="max-w-sm w-6/12 bg-gray-200 flex flex-col p-8">
-          <section>
-            <label className="block">
-              <h1 className="font-bold text-gray-700">Width</h1>
-              <RangeInput value={width} onChange={setWidth} min={5} max={20} />
-            </label>
+      <aside className="max-w-sm w-1/3 flex flex-col p-8 border-l-2">
+        {!problem && (
+          <>
+            <section>
+              <label className="block">
+                <h1 className="font-bold text-gray-700">Width</h1>
+                <RangeInput value={width} onChange={setWidth} min={5} max={20} />
+              </label>
 
-            <label className="mt-4 block">
-              <h1 className="font-bold text-gray-700">Height</h1>
-              <RangeInput value={height} onChange={setHeight} min={5} max={20} />
-            </label>
+              <label className="mt-4 block">
+                <h1 className="font-bold text-gray-700">Height</h1>
+                <RangeInput value={height} onChange={setHeight} min={5} max={20} />
+              </label>
 
-            <div className="mt-4">
-              <h1 className="font-bold text-gray-700">Connections</h1>
-              <div className="bg-gray-100 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
-                {!connectors?.length && (
-                  <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
-                    No connections found
-                  </div>
-                )}
-                {connectors.map(([start, end], i) => {
-                  const [color, intensity] = getColor(i);
-                  return (
-                    <div key={`${start[0]}-${start[1]}`} className="flex items-center py-2 group">
-                      <div
-                        className={`w-2 h-2 rounded-full mr-2 ring-2 bg-${color}-${intensity} ring-${color}-100`}
-                      />
-                      <span className="text-sm text-gray-600">
-                        ({start[0]}, {start[1]}) - ({end[0]}, {end[1]})
-                      </span>
-                      <button
-                        className="p-1 ml-auto hover:opacity-100 opacity-50 transition-opacity focus:outline-none"
-                        onClick={handleDeleteConnection(i)}
-                      >
-                        <FiTrash2 className="group-hover:opacity-100 opacity-30 transition-opacity" />
-                      </button>
+              <div className="mt-4">
+                <h1 className="font-bold text-gray-700">Connections</h1>
+                <div className="border-2 bg-gray-50 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
+                  {!connectors?.length && (
+                    <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
+                      No connections found
                     </div>
-                  );
-                })}
+                  )}
+                  {connectors.map(([start, end], i) => {
+                    const [color, intensity] = getColor(i);
+                    return (
+                      <div key={`${start[0]}-${start[1]}`} className="flex items-center py-2 group">
+                        <div
+                          className={`w-2 h-2 rounded-full mr-2 ring-2 bg-${color}-${intensity} ring-${color}-100`}
+                        />
+                        <span className="text-sm text-gray-600">
+                          ({start[0]}, {start[1]}) - ({end[0]}, {end[1]})
+                        </span>
+                        <button
+                          className="p-1 ml-auto hover:opacity-100 opacity-50 transition-opacity focus:outline-none"
+                          onClick={handleDeleteConnection(i)}
+                        >
+                          <FiTrash2 className="group-hover:opacity-100 opacity-30 transition-opacity" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </section>
-          <section className="mt-10">
-            <label className="block">
-              <h1 className="font-bold text-gray-700">Population</h1>
-              <RangeInput
-                value={population}
-                onChange={setPopulation}
-                min={50}
-                max={1000}
-                step={50}
-              />
-            </label>
+            </section>
+            <section className="mt-10">
+              <label className="block">
+                <h1 className="font-bold text-gray-700">Population</h1>
+                <RangeInput
+                  value={population}
+                  onChange={setPopulation}
+                  min={50}
+                  max={1000}
+                  step={50}
+                />
+              </label>
 
-            <label className="mt-4 block">
-              <h1 className="font-bold text-gray-700">Mutation chance</h1>
-              <RangeInput value={mutation} onChange={setMutation} min={1} max={80} step={1}>
-                {(value) => <>{value}%</>}
-              </RangeInput>
-            </label>
-          </section>
-          {connectors?.length < 2 && (
-            <button
-              className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 mt-10 shadow-lg"
-              disabled
-            >
-              Start
-            </button>
-          )}
-          {connectors?.length >= 2 && (
-            <button
-              className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
-              onClick={handleStart}
-            >
-              Start
-            </button>
-          )}
-        </aside>
-      )}
-      {problem && (
-        <aside className="max-w-sm w-6/12 bg-gray-200 flex justify-center flex-col p-8">
-          <div>
-            <h1 className="font-bold text-gray-700">Individuals</h1>
-            <div className="bg-gray-100 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
-              {!problem?.population?.length && (
-                <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
-                  No individuals generated
-                </div>
-              )}
-              {problem?.population.map((individual, i) => (
-                <div
-                  key={i}
-                  className="text-sm text-gray-600 p-2 hover:bg-gray-400 transition-colors cursor-pointer"
-                  onClick={() => setIndividual(individual)}
-                >
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-          </div>
+              <label className="mt-4 block">
+                <h1 className="font-bold text-gray-700">Mutation chance</h1>
+                <RangeInput value={mutation} onChange={setMutation} min={1} max={80} step={1}>
+                  {(value) => <>{value}%</>}
+                </RangeInput>
+              </label>
+            </section>
+            {connectors?.length < 2 && (
+              <button
+                className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 mt-10 shadow-lg"
+                disabled
+              >
+                Start
+              </button>
+            )}
+            {connectors?.length >= 2 && (
+              <button
+                className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
+                onClick={handleStart}
+              >
+                Start
+              </button>
+            )}
+          </>
+        )}
+        {problem && (
           <button
-            className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg mt-4"
+            className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg my-auto"
             onClick={() => setProblem(undefined)}
           >
             Stop
           </button>
-        </aside>
-      )}
+        )}
+      </aside>
     </main>
   );
 };

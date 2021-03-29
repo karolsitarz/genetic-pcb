@@ -58,22 +58,21 @@ export const getPopulationBest = (problem: Problem) => {
 export const adapt = (previousBest: Individual, problem: Problem): Problem => {
   const { duplicationWeights, outOfBoundsWeights } = problem;
   const currentBest = getPopulationBest(problem);
-  if (previousBest <= currentBest) return problem;
+  if (previousBest?.fitness == null) throw new Error("The fitness has not been calculated!");
+  if (currentBest?.fitness == null) throw new Error("The fitness has not been calculated!");
+
+  if (previousBest.fitness <= currentBest.fitness) return problem;
 
   const errors = errorValues(currentBest, problem);
 
-  const outOfBounds = errors.outOfBounds.reduce<Set<string>>(
-    (set, [index]) => set.add(index),
-    new Set(),
-  );
+  const outOfBounds = new Set<string>();
+  errors.outOfBounds.forEach(([index]) => outOfBounds.add(index));
   const newOutOfBoundsWeights = outOfBoundsWeights.map((weight, index) =>
     outOfBounds.has(index.toString()) ? weight + 1 : weight,
   );
 
-  const duplication = errors.duplication.reduce<Set<number>>(
-    (set, group) => group.reduce((set, index) => set.add(index), set),
-    new Set(),
-  );
+  const duplication = new Set<number>();
+  errors.duplication.forEach((group) => group.forEach((item) => duplication.add(item)));
   const newDuplicationWeights = duplicationWeights.map((weight, index) =>
     duplication.has(index) ? weight + 1 : weight,
   );
@@ -103,14 +102,29 @@ export const populate = (problem: Problem): Problem => {
   return { ...problem, population: newPopulation };
 };
 
-let i = 0;
-export const runProblem = (problem: Problem, best?: Individual) => {
-  if (i++ == 10) return;
-  console.log(i);
-  const calculated = calculateProblemFitness(problem);
-  const bestIndividual = best ?? getPopulationBest(calculated);
+export const runProblem = async (problem: Problem) => {
+  let i = 0;
 
-  const adapted = adapt(bestIndividual, calculated);
-  const newProblem = populate(adapted);
-  runProblem(newProblem);
+  const run = async (problem: Problem, best: Individual) => {
+    console.log(i);
+    if (i % 5 === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any)._setIndividual(best);
+    }
+    if (i++ == 50) {
+      console.log(problem, best);
+      return;
+    }
+
+    const populated = populate(problem);
+    const calculated = calculateProblemFitness(populated);
+    const adapted = adapt(best, calculated);
+    const bestIndividual = getPopulationBest(adapted);
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    await run(adapted, bestIndividual);
+  };
+
+  const calculated = calculateProblemFitness(problem);
+  const best = getPopulationBest(calculated);
+  await run(calculated, best);
 };
