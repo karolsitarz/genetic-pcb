@@ -6,14 +6,58 @@ import { FiTrash2 } from "react-icons/fi";
 import { compareTuples, Pair, times } from "util/array";
 import { Connector, generateProblem, Problem, runProblem } from "logic/problem";
 import { BoardCanvas } from "components/BoardCanvas";
+import { IoMdRefresh } from "react-icons/all";
+
+const INITIAL_CONNECTORS = [
+  [
+    [1, 1],
+    [1, 4],
+  ],
+  [
+    [4, 5],
+    [8, 3],
+  ],
+  [
+    [5, 5],
+    [7, 1],
+  ],
+  [
+    [5, 0],
+    [6, 4],
+  ],
+  [
+    [6, 2],
+    [8, 1],
+  ],
+  [
+    [8, 0],
+    [6, 0],
+  ],
+  [
+    [2, 4],
+    [0, 3],
+  ],
+  [
+    [0, 4],
+    [3, 6],
+  ],
+  [
+    [2, 2],
+    [0, 0],
+  ],
+  [
+    [1, 0],
+    [3, 0],
+  ],
+] as Connector[];
 
 export const App = () => {
-  const [width, setWidth] = useState(8);
-  const [height, setHeight] = useState(8);
+  const [width, setWidth] = useState(9);
+  const [height, setHeight] = useState(7);
   const [population, setPopulation] = useState(100);
   const [mutation, setMutation] = useState(10);
   const [selected, setSelected] = useState<Pair<number> | null>(null);
-  const [connectors, setConnectors] = useState<Connector[]>([]);
+  const [connectors, setConnectors] = useState<Connector[]>(INITIAL_CONNECTORS);
 
   const [problem, setProblem] = useState<Problem | null>(null);
   const generationRef = useRef<HTMLDivElement>(null);
@@ -139,7 +183,20 @@ export const App = () => {
                   />
 
                   <div className="mt-4">
-                    <h1 className="font-bold text-gray-700">Connections</h1>
+                    <div className="flex items-center justify-between">
+                      <h1 className="font-bold text-gray-700 mr-2">Connections</h1>
+                      <button
+                        className={`p-1 transition-opacity text-lg ${
+                          !!connectors?.length
+                            ? "opacity-50 hover:opacity-100"
+                            : "opacity-20 cursor-default"
+                        }`}
+                        onClick={() => setConnectors([])}
+                        disabled={!connectors?.length}
+                      >
+                        <IoMdRefresh />
+                      </button>
+                    </div>
                     <div className="border-2 bg-gray-50 rounded-lg px-4 h-40 overflow-y-auto mt-1 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
                       {!connectors?.length && (
                         <div className="text-center text-gray-400 text-sm h-full w-full flex justify-center items-center">
