@@ -34,7 +34,7 @@ export const RangeInput = ({
           {children ? children(innerValue) : innerValue}
         </span>
       </div>
-      <div className="w-full">
+      <div className="w-full px-2">
         <Range
           values={[innerValue]}
           onChange={([value]) => setInnerValue(value)}
@@ -51,7 +51,7 @@ export const RangeInput = ({
           )}
           renderThumb={({ props }) => (
             <div
-              className="h-5 w-5 rounded-full bg-blue-600 shadow focus:outline-none focus:bg-blue-800"
+              className="h-4 w-4 rounded-full bg-blue-500 shadow focus:outline-none focus:bg-blue-700"
               {...props}
             />
           )}

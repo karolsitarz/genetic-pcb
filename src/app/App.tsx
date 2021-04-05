@@ -56,6 +56,7 @@ export const App = () => {
   const [height, setHeight] = useState(7);
   const [population, setPopulation] = useState(100);
   const [mutation, setMutation] = useState(10);
+  const [drawEvery, setDrawEvery] = useState(1);
   const [selected, setSelected] = useState<Pair<number> | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>(INITIAL_CONNECTORS);
 
@@ -102,7 +103,7 @@ export const App = () => {
 
   useEffect(() => {
     if (!problem) return;
-    runProblem(problem);
+    runProblem(problem, drawEvery);
   }, [problem]);
 
   const handleStop = () => {
@@ -168,10 +169,11 @@ export const App = () => {
           </CanvasContainer>
         </section>
         <aside className="md:max-w-xs md:w-1/2 p-8 pt-12 md:pt-8 md:border-l-2 bg-gray-100 z-10 rounded-t-3xl md:rounded-none shadow-blur md:shadow-none md:max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400">
-          <div className="flex flex-col max-w-sm mx-auto">
+          <div className="flex flex-col max-w-sm m-auto h-full">
             {!problem && (
               <>
-                <section>
+                <section className="mb-12">
+                  <h1 className="font-bold text-xl text-gray-500 mb-2">Problem</h1>
                   <RangeInput value={width} onChange={setWidth} min={5} max={20} label="Width" />
                   <RangeInput
                     value={height}
@@ -228,7 +230,8 @@ export const App = () => {
                     </div>
                   </div>
                 </section>
-                <section className="mt-10">
+                <section className="mb-12">
+                  <h1 className="font-bold text-xl text-gray-500 mb-2">Parameters</h1>
                   <RangeInput
                     value={population}
                     onChange={setPopulation}
@@ -249,28 +252,41 @@ export const App = () => {
                     {(value) => <>{value}%</>}
                   </RangeInput>
                 </section>
-                {connectors?.length < 2 && (
-                  <button
-                    className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 mt-10 shadow-lg"
-                    disabled
-                  >
-                    Start
-                  </button>
-                )}
-                {connectors?.length >= 2 && (
-                  <button
-                    className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 mt-10 shadow-lg"
-                    onClick={handleStart}
-                  >
-                    Start
-                  </button>
-                )}
+                <section className="flex flex-col pb-8">
+                  <h1 className="font-bold text-xl text-gray-500 mb-2">Runtime</h1>
+                  <RangeInput
+                    value={drawEvery}
+                    onChange={setDrawEvery}
+                    min={1}
+                    max={10}
+                    label="Draw every"
+                    dangerZoneClassName="w-0"
+                  />
+                  {connectors?.length < 2 && (
+                    <button
+                      className="rounded-lg bg-gray-400 text-gray-100 font-bold p-3 shadow-lg mt-2"
+                      disabled
+                    >
+                      Start
+                    </button>
+                  )}
+                  {connectors?.length >= 2 && (
+                    <button
+                      className="rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg mt-2"
+                      onClick={handleStart}
+                    >
+                      Start
+                    </button>
+                  )}
+                </section>
               </>
             )}
             {problem && (
               <div className="d-flex justify-center flex-col my-auto">
-                <h1 className="font-bold text-gray-700">Generation</h1>
-                <div ref={generationRef} className="mx-auto mb-4" />
+                <div className="flex justify-between items-center mb-4">
+                  <h1 className="font-bold text-gray-700">Generation</h1>
+                  <div ref={generationRef} className="text-gray-500 font-bold" />
+                </div>
                 <button
                   className="rounded-lg bg-gray-500 hover:bg-gray-600 transition-colors focus:outline-none text-gray-100 font-bold p-3 shadow-lg w-full"
                   onClick={handleStop}

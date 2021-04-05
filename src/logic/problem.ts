@@ -110,19 +110,19 @@ export const populate = (problem: Problem): Problem => {
   return { ...problem, population: newPopulation };
 };
 
-export const runProblem = async (problem: Problem) => {
+export const runProblem = async (problem: Problem, drawEvery: number) => {
   let i = 0;
   window.__drawClear();
   window.__drawBoard(problem);
   window.__updateGeneration(0);
 
   const run = async (problem: Problem, best: Individual) => {
-    window.__updateGeneration(i);
     if (!window.__isRunning) {
       window.__drawClear();
       return;
     }
-    if (i++ % 5 === 0) {
+    window.__updateGeneration(i);
+    if (i++ % drawEvery === 0) {
       window.__drawIndividual(best, problem);
     }
 

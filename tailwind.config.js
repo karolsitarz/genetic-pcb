@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   purge: {
     content: ["./src/**/*.tsx"],
@@ -19,6 +22,9 @@ module.exports = {
       },
       boxShadow: {
         blur: "rgba(0, 0, 0, 0.3) 0 0 50px 0",
+      },
+      fontFamily: {
+        sans: ["Poppins", ...defaultTheme.fontFamily.sans],
       },
     },
   },
